@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:apicall/View/features/post/models/post_dat_ui_model.dart';
 import 'package:http/http.dart' as http;
@@ -11,6 +12,7 @@ class PostRepo {
       var response = await client
           .get(Uri.parse("https://jsonplaceholder.typicode.com/posts/"));
       List result = jsonDecode(response.body);
+      // log(result.toString());
       for (int i = 0; i < result.length; i++) {
         PostDataUiModel post =
             PostDataUiModel.fromMap(result[i] as Map<String, dynamic>);

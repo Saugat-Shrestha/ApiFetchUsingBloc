@@ -18,6 +18,8 @@ class PostBloc extends Bloc<PostEvent, PostState> {
   FutureOr<void> postInitialFetchEvent(
       PostInitialFetchEvent event, Emitter<PostState> emit) async {
     emit(PostFetchingErrorState());
+
+    Future.delayed(Duration(seconds: 5));
     List<PostDataUiModel> posts = await PostRepo.fetchPost();
     emit(PostFetchingSuccessfulState(posts: posts));
   }

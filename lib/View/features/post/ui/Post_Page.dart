@@ -1,6 +1,8 @@
 import 'package:apicall/View/features/post/bloc/post_bloc.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class PostPage extends StatefulWidget {
   const PostPage({super.key});
@@ -21,20 +23,29 @@ class _PostPageState extends State<PostPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Post"),
+        title: Text("Get"),
       ),
       body: BlocConsumer<PostBloc, PostState>(
         bloc: postBloc,
         listenWhen: (previous, current) => current is PostActionState,
         buildWhen: (previous, current) => current is! PostActionState,
         listener: (context, state) {
-          // TODO: implement listener
+          if (state is PostFetchingSuccessfulState) {
+            Fluttertoast.showToast(
+                msg: 'This is a toast message',
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.BOTTOM,
+                timeInSecForIosWeb: 1,
+                backgroundColor: Colors.grey,
+                textColor: Colors.white,
+                fontSize: 16.0);
+          }
         },
         builder: (context, state) {
           switch (state.runtimeType) {
             case PostFetchingErrorState:
               return Center(
-                child: CircularProgressIndicator(),
+                child: CupertinoActivityIndicator(),
               );
             case PostFetchingSuccessfulState:
               final successState = state as PostFetchingSuccessfulState;
@@ -42,26 +53,31 @@ class _PostPageState extends State<PostPage> {
                 child: ListView.builder(
                   itemCount: successState.posts.length,
                   itemBuilder: (context, index) {
-                    return Container(
+                    return Card(
                       color: Colors.grey.shade200,
-                      padding: EdgeInsets.all(16),
                       margin: EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(successState.posts[index].userId.toString()),
-                          Text(successState.posts[index].body),
-                        ],
+                      child: Container(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(successState.posts.length.toString()),
+                            Text(successState.posts[index].id.toString()),
+                            Text(successState.posts[index].body),
+                          ],
+                        ),
                       ),
                     );
                   },
                 ),
               );
               break;
+
             default:
               return const SizedBox();
           }
-          return Container();
+        
         },
       ),
     );
